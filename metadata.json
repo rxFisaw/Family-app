@@ -1,0 +1,6 @@
+{
+  "name": "আমাদের পরিবার",
+  "description": "পরিবারের সবার ছবি, নাম, বিবরণ, নিজের প্রোফাইল এবং জন্মদিনের নোটিফিকেশনসহ একটি পারিবারিক অ্যাপ।",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

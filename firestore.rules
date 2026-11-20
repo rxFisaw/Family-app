@@ -1,0 +1,157 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidUserProfile(data, userId) {
+      return data.keys().hasAll([
+        'userId', 'fullName', 'nickname', 'bio', 'birthDay', 'birthMonth', 'birthYear',
+        'relationLabel', 'profession', 'bloodGroup', 'phone', 'address', 'hobbies',
+        'favoriteFood', 'favoriteColor', 'favoriteQuote', 'photoBase64',
+        'notifyEnabled', 'notifyDaysBefore', 'notifyHour', 'createdAt', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'userId', 'fullName', 'nickname', 'bio', 'birthDay', 'birthMonth', 'birthYear',
+        'relationLabel', 'profession', 'bloodGroup', 'phone', 'address', 'hobbies',
+        'favoriteFood', 'favoriteColor', 'favoriteQuote', 'photoBase64',
+        'notifyEnabled', 'notifyDaysBefore', 'notifyHour', 'createdAt', 'updatedAt'
+      ]) &&
+      data.userId is string && data.userId == userId && data.userId.size() <= 128 &&
+      data.fullName is string && data.fullName.size() >= 1 && data.fullName.size() <= 80 &&
+      data.nickname is string && data.nickname.size() <= 40 &&
+      data.bio is string && data.bio.size() <= 500 &&
+      data.birthDay is int && data.birthDay >= 0 && data.birthDay <= 31 &&
+      data.birthMonth is int && data.birthMonth >= 0 && data.birthMonth <= 12 &&
+      data.birthYear is int && data.birthYear >= 0 && data.birthYear <= 2100 &&
+      data.relationLabel is string && data.relationLabel.size() <= 40 &&
+      data.profession is string && data.profession.size() <= 80 &&
+      data.bloodGroup is string && data.bloodGroup.size() <= 10 &&
+      data.phone is string && data.phone.size() <= 30 &&
+      data.address is string && data.address.size() <= 150 &&
+      data.hobbies is string && data.hobbies.size() <= 200 &&
+      data.favoriteFood is string && data.favoriteFood.size() <= 100 &&
+      data.favoriteColor is string && data.favoriteColor.size() <= 60 &&
+      data.favoriteQuote is string && data.favoriteQuote.size() <= 250 &&
+      data.photoBase64 is string && data.photoBase64.size() <= 250000 &&
+      data.notifyEnabled is bool &&
+      data.notifyDaysBefore is int && data.notifyDaysBefore >= 0 && data.notifyDaysBefore <= 7 &&
+      data.notifyHour is int && data.notifyHour >= 0 && data.notifyHour <= 23 &&
+      data.createdAt is timestamp && data.createdAt <= request.time &&
+      data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    function isValidFamilyCategory(cat) {
+      return cat in ['SELF', 'PARENTS', 'SIBLINGS', 'SPOUSE_KIDS', 'GRANDPARENTS', 'RELATIVES'];
+    }
+
+    function isValidFamilyMember(data, userId) {
+      return data.keys().hasAll([
+        'userId', 'fullName', 'nickname', 'relation', 'category', 'bio',
+        'birthDay', 'birthMonth', 'birthYear', 'profession', 'bloodGroup',
+        'phone', 'address', 'hobbies', 'favoriteThing', 'specialNote',
+        'photoBase64', 'birthdayReminder', 'selfProfile', 'createdAt', 'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'userId', 'fullName', 'nickname', 'relation', 'category', 'bio',
+        'birthDay', 'birthMonth', 'birthYear', 'profession', 'bloodGroup',
+        'phone', 'address', 'hobbies', 'favoriteThing', 'specialNote',
+        'photoBase64', 'birthdayReminder', 'selfProfile', 'createdAt', 'updatedAt'
+      ]) &&
+      data.userId is string && data.userId == userId && data.userId.size() <= 128 &&
+      data.fullName is string && data.fullName.size() >= 1 && data.fullName.size() <= 80 &&
+      data.nickname is string && data.nickname.size() <= 40 &&
+      data.relation is string && data.relation.size() >= 1 && data.relation.size() <= 40 &&
+      data.category is string && isValidFamilyCategory(data.category) &&
+      data.bio is string && data.bio.size() <= 500 &&
+      data.birthDay is int && data.birthDay >= 0 && data.birthDay <= 31 &&
+      data.birthMonth is int && data.birthMonth >= 0 && data.birthMonth <= 12 &&
+      data.birthYear is int && data.birthYear >= 0 && data.birthYear <= 2100 &&
+      data.profession is string && data.profession.size() <= 80 &&
+      data.bloodGroup is string && data.bloodGroup.size() <= 10 &&
+      data.phone is string && data.phone.size() <= 30 &&
+      data.address is string && data.address.size() <= 150 &&
+      data.hobbies is string && data.hobbies.size() <= 200 &&
+      data.favoriteThing is string && data.favoriteThing.size() <= 120 &&
+      data.specialNote is string && data.specialNote.size() <= 300 &&
+      data.photoBase64 is string && data.photoBase64.size() <= 250000 &&
+      data.birthdayReminder is bool &&
+      data.selfProfile is bool &&
+      data.createdAt is timestamp && data.createdAt <= request.time &&
+      data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    match /users/{userId} {
+      allow get: if isValidId(userId) && isOwner(userId);
+      allow list: if false;
+
+      allow create: if isValidId(userId) &&
+                       isOwner(userId) &&
+                       isValidUserProfile(incoming(), userId);
+
+      allow update: if isValidId(userId) &&
+                       isOwner(userId) &&
+                       isValidUserProfile(incoming(), userId) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       (
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'fullName', 'nickname', 'bio', 'birthDay', 'birthMonth', 'birthYear',
+                           'relationLabel', 'profession', 'bloodGroup', 'phone', 'address',
+                           'hobbies', 'favoriteFood', 'favoriteColor', 'favoriteQuote',
+                           'photoBase64', 'notifyEnabled', 'notifyDaysBefore', 'notifyHour', 'updatedAt'
+                         ])
+                       );
+
+      allow delete: if isValidId(userId) && isOwner(userId);
+
+      match /members/{memberId} {
+        allow get: if isValidId(userId) && isValidId(memberId) && isOwner(userId);
+        allow list: if isValidId(userId) && isOwner(userId);
+
+        allow create: if isValidId(userId) && isValidId(memberId) &&
+                         isOwner(userId) &&
+                         isValidFamilyMember(incoming(), userId);
+
+        allow update: if isValidId(userId) && isValidId(memberId) &&
+                         isOwner(userId) &&
+                         isValidFamilyMember(incoming(), userId) &&
+                         incoming().userId == existing().userId &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().selfProfile == existing().selfProfile &&
+                         (
+                           incoming().diff(existing()).affectedKeys().hasOnly([
+                             'fullName', 'nickname', 'relation', 'category', 'bio',
+                             'birthDay', 'birthMonth', 'birthYear', 'profession', 'bloodGroup',
+                             'phone', 'address', 'hobbies', 'favoriteThing', 'specialNote',
+                             'photoBase64', 'birthdayReminder', 'updatedAt'
+                           ])
+                         );
+
+        allow delete: if isValidId(userId) && isValidId(memberId) && isOwner(userId);
+      }
+    }
+  }
+}

@@ -1,0 +1,256 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated user's personal profile and birthday notification preferences.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner Firebase Auth UID."
+        },
+        "fullName": {
+          "type": "string",
+          "description": "User's full display name."
+        },
+        "nickname": {
+          "type": "string",
+          "description": "User's family nickname."
+        },
+        "bio": {
+          "type": "string",
+          "description": "Personal description or life story."
+        },
+        "birthDay": {
+          "type": "integer",
+          "description": "Birth day of month (1-31, or 0 if unset)."
+        },
+        "birthMonth": {
+          "type": "integer",
+          "description": "Birth month (1-12, or 0 if unset)."
+        },
+        "birthYear": {
+          "type": "integer",
+          "description": "Birth year (e.g. 1998, or 0 if omitted)."
+        },
+        "relationLabel": {
+          "type": "string",
+          "description": "Role label in family (e.g. আমি)."
+        },
+        "profession": {
+          "type": "string",
+          "description": "Profession or education."
+        },
+        "bloodGroup": {
+          "type": "string",
+          "description": "Blood group (e.g. O+)."
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone number."
+        },
+        "address": {
+          "type": "string",
+          "description": "Home city or address."
+        },
+        "hobbies": {
+          "type": "string",
+          "description": "Hobbies and interests."
+        },
+        "favoriteFood": {
+          "type": "string",
+          "description": "Favorite food."
+        },
+        "favoriteColor": {
+          "type": "string",
+          "description": "Favorite color."
+        },
+        "favoriteQuote": {
+          "type": "string",
+          "description": "Favorite quote or personal motto."
+        },
+        "photoBase64": {
+          "type": "string",
+          "description": "Compressed JPEG thumbnail encoded as Base64."
+        },
+        "notifyEnabled": {
+          "type": "boolean",
+          "description": "Whether daily birthday notifications are enabled."
+        },
+        "notifyDaysBefore": {
+          "type": "integer",
+          "description": "Lead time in days (0, 1, or 3)."
+        },
+        "notifyHour": {
+          "type": "integer",
+          "description": "Preferred notification hour (0-23)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of creation (FieldValue.serverTimestamp())."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update (FieldValue.serverTimestamp())."
+        }
+      },
+      "required": [
+        "userId",
+        "fullName",
+        "nickname",
+        "bio",
+        "birthDay",
+        "birthMonth",
+        "birthYear",
+        "relationLabel",
+        "profession",
+        "bloodGroup",
+        "phone",
+        "address",
+        "hobbies",
+        "favoriteFood",
+        "favoriteColor",
+        "favoriteQuote",
+        "photoBase64",
+        "notifyEnabled",
+        "notifyDaysBefore",
+        "notifyHour",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "FamilyMember": {
+      "title": "FamilyMember",
+      "description": "A family member profile with photo, name, description, birthday, and extended details.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner Firebase Auth UID."
+        },
+        "fullName": {
+          "type": "string",
+          "description": "Member's full name."
+        },
+        "nickname": {
+          "type": "string",
+          "description": "Member's nickname."
+        },
+        "relation": {
+          "type": "string",
+          "description": "Relationship label (e.g. বাবা, মা, ভাই, বোন)."
+        },
+        "category": {
+          "type": "string",
+          "enum": ["SELF", "PARENTS", "SIBLINGS", "SPOUSE_KIDS", "GRANDPARENTS", "RELATIVES"],
+          "description": "Family category enum."
+        },
+        "bio": {
+          "type": "string",
+          "description": "Member description and story."
+        },
+        "birthDay": {
+          "type": "integer",
+          "description": "Birth day of month (1-31, or 0 if unset)."
+        },
+        "birthMonth": {
+          "type": "integer",
+          "description": "Birth month (1-12, or 0 if unset)."
+        },
+        "birthYear": {
+          "type": "integer",
+          "description": "Birth year (or 0 if omitted)."
+        },
+        "profession": {
+          "type": "string",
+          "description": "Profession or school."
+        },
+        "bloodGroup": {
+          "type": "string",
+          "description": "Blood group."
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone number."
+        },
+        "address": {
+          "type": "string",
+          "description": "City or address."
+        },
+        "hobbies": {
+          "type": "string",
+          "description": "Hobbies and interests."
+        },
+        "favoriteThing": {
+          "type": "string",
+          "description": "Favorite food, color, or activity."
+        },
+        "specialNote": {
+          "type": "string",
+          "description": "Fond memory or special note."
+        },
+        "photoBase64": {
+          "type": "string",
+          "description": "Compressed JPEG thumbnail encoded as Base64."
+        },
+        "birthdayReminder": {
+          "type": "boolean",
+          "description": "Whether birthday notification is enabled for this member."
+        },
+        "selfProfile": {
+          "type": "boolean",
+          "description": "True if this card represents the signed-in user."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of creation (FieldValue.serverTimestamp())."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update (FieldValue.serverTimestamp())."
+        }
+      },
+      "required": [
+        "userId",
+        "fullName",
+        "nickname",
+        "relation",
+        "category",
+        "bio",
+        "birthDay",
+        "birthMonth",
+        "birthYear",
+        "profession",
+        "bloodGroup",
+        "phone",
+        "address",
+        "hobbies",
+        "favoriteThing",
+        "specialNote",
+        "photoBase64",
+        "birthdayReminder",
+        "selfProfile",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "User's personal profile and notification settings."
+    },
+    "/users/{userId}/members/{memberId}": {
+      "schema": {
+        "$ref": "#/entities/FamilyMember"
+      },
+      "description": "Family members managed by the authenticated user."
+    }
+  }
+}

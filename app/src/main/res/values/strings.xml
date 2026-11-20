@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">আমাদের পরিবার</string>
+    <string name="notification_channel_name">জন্মদিনের রিমাইন্ডার</string>
+    <string name="notification_channel_desc">পরিবারের সদস্যদের জন্মদিনের শুভেচ্ছা ও রিমাইন্ডার নোটিফিকেশন</string>
+    <string name="sign_in_with_google">গুগল দিয়ে সাইন-ইন করুন</string>
+    <string name="content_desc_family_banner">আমাদের পরিবার ব্যানার</string>
+    <string name="content_desc_welcome_illustration">পরিবার উদযাপনের ছবি</string>
+</resources>
